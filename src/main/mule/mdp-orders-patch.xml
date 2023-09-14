@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="mdp-orders-patch-subflow" doc:id="26d3a284-c545-405e-8da4-fd2caeecbc6d" >
+		<ee:transform doc:name="updateFlowname" doc:id="ca87c619-8663-441b-be9f-e497239aeafd" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="flowName" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.loggingVars update {
+	case .flowName -> Mule::p('flowName.patchOrdersSubflow')
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="cd406202-a363-4b26-847b-508d01c85738" name="common-flow-start-logging-subflow"/>
+		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="b6811015-a040-49f8-a1fd-1e1dc7acf890" name="common-before-request-logging-subflow"/>
+		<db:update doc:name="Update" doc:id="272eb01f-cbc7-442d-8ca6-a8e4f50cd9a0" config-ref="Database_Config"/>
+		<ee:transform doc:name="responseToJson" doc:id="6cacc726-4606-4a47-83f5-12cfdffb3cc7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="common-after-request-logging-subflow" doc:id="d1750487-f872-4fd8-9553-3a6f802b3d2c" name="common-after-request-logging-subflow"/>
+		<flow-ref doc:name="common-flow-end-logging-subflow" doc:id="7fdff614-7f01-4e67-b629-f147dbe19350" name="common-flow-end-logging-subflow"/>
+	</sub-flow>
+</mule>

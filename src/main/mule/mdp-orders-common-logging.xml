@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="common-process-start-logging-subflow" doc:id="7701ac44-5851-485e-9b74-73d703fe29fc" >
+		<async doc:name="Async" doc:id="20285614-f0bd-4fd6-8d95-93a8bf20cd4c" >
+			<ee:transform doc:name="processStartTransformMessage" doc:id="0e3e35e2-1289-4927-ad7c-55be01f0523b" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json skipNullOn='everywhere'
+---
+{
+	"flowName": vars.loggingVars.flowName,
+	"apiName": vars.loggingVars.appName,
+	"appVersion": vars.loggingVars.appVersion,
+	"timeStamp": now(),
+	"correlationId": vars.loggingVars.correlationId,
+	"processStartTime": vars.apiKickOffTime	as String ++ "ms",
+	"rsourcePath": vars.resourcePath,
+	"step": Mule::p('step.processStart')
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="processStartLogger" doc:id="15fcfce5-7e1f-40ca-8d3e-48d2da1a464e" message="#[payload]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="common-process-end-logging-subflow" doc:id="a7cab286-fe49-44bc-a5c8-6c0a4b2aa473" >
+		<async doc:name="Async" doc:id="a0bc861e-2d5f-432e-825b-872820977f9a" >
+			<ee:transform doc:name="processEndTransformMessage" doc:id="6b59ca95-5778-4c35-afc3-5999794f7594" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::util::Timer
+output application/json
+---
+{
+	"flowName": vars.loggingVars.flowName default "",
+	"apiName": vars.loggingVars.appName,
+	"appVersion": vars.loggingVars.appVersion,
+	"timeStamp": now(),
+	"correlationId": vars.loggingVars.correlationId,
+	"step": Mule::p('step.processEnd'),
+	"code": if(!isEmpty(attributes.statusCode)) attributes.statusCode else "NA",
+	"processEndTime": (currentMilliseconds() - vars.apiKickOffTime) as String ++ "ms"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="processEndLogger" doc:id="f3813ec0-99fc-4b59-a3eb-55710313e873" message="#[payload]"/>
+		</async>
+	</sub-flow>
+	<sub-flow name="common-flow-start-logging-subflow" doc:id="984a33b8-6a1f-4163-83b2-e86554e0a813" >
+		<async doc:name="Async" doc:id="569618d5-9e7f-4c5a-98c6-663b9f6c6141" >
+			<ee:transform doc:name="flowStartTransformMessage" doc:id="10d7f748-ce2a-4164-a2db-0ac041782185" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::util::Timer
+output application/json
+---
+{
+	"flowName": vars.loggingVars.flowName default "",
+	"apiName": vars.loggingVars.appName,
+	"appVersion": vars.loggingVars.appVersion,
+	"timeStamp": now(),
+	"correlationId": vars.loggingVars.correlationId,
+	"step": Mule::p('step.flowStart')
+	
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="flowStartLogger" doc:id="2075d4d0-e9d0-4d88-b4ca-d46a15742933" />
+		</async>
+	</sub-flow>
+	<sub-flow name="common-flow-end-logging-subflow" doc:id="809a563a-76ac-41db-8dd8-102feb8295d2" >
+		<async doc:name="Async" doc:id="db37115a-7187-439d-b75b-a2dc6b062f17" >
+			<ee:transform doc:name="flowEndTransformMessage" doc:id="2e2ea0cf-dfa5-434e-98f7-b01a742815fd" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::util::Timer
+output application/json skipNullOn='everywhere'
+---
+{
+	"apiName": vars.loggingVars.appName,
+	"appVersion": vars.loggingVars.appVersion,
+	"timeStamp": now(),
+	"correlationId": vars.loggingVars.correlationId,
+	"flowName": vars.loggingVars.flowName default "",
+	"step": Mule::p('step.flowEnd')
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="flowEndLogger" doc:id="e23db6ad-a065-48f8-8e5b-37a25627ddeb" />
+		</async>
+	</sub-flow>
+	<sub-flow name="common-before-request-logging-subflow" doc:id="6a47d56f-4c5f-4394-8fa9-00ecb3bed439" >
+		<async doc:name="Async" doc:id="27e35abb-2194-486c-866d-ed0401b91542" >
+			<ee:transform doc:name="beforeRequest" doc:id="0720f4c1-9250-4911-9373-f76585b0364b" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::util::Timer
+output application/json
+---
+{
+	"apiName": vars.loggingVars.appName,
+	"appVersion": vars.loggingVars.appVersion,
+	"timeStamp": now(),
+	"correlationId": vars.loggingVars.correlationId,
+	"flowName": vars.loggingVars.flowName default "",
+	"step": Mule::p('step.beforeRequest'),
+	"requestPayload": payload
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="beforeRequest" doc:id="af270bb5-011f-4d13-bef2-fd920595954b" />
+		</async>
+	</sub-flow>
+	<sub-flow name="common-after-request-logging-subflow" doc:id="94e79b31-1a6c-4680-a0b2-f3b84d137f71" >
+		<async doc:name="Async" doc:id="aa6a7494-c9bf-42ae-8f8a-f03b1e90b74d" >
+			<ee:transform doc:name="afterRequest" doc:id="0ed92111-33f9-47ab-8805-abe389acafa0" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+import * from dw::util::Timer
+output application/json
+---
+{
+	"apiName": vars.loggingVars.appName,
+	"appVersion": vars.loggingVars.appVersion,
+	"timeStamp": now(),
+	"correlationId": vars.loggingVars.correlationId,
+	"step": Mule::p('step.afterRequest'),
+	"requestPayload": payload
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<logger level="INFO" doc:name="afterRequest" doc:id="ec75cdd1-0adb-4b7b-a364-ea99661ac225" />
+		</async>
+	</sub-flow>
+</mule>

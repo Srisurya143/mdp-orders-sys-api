@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="mdp-orders-getid-subflow" doc:id="5b89b101-88ed-4325-b368-caced022f672" >
+		<ee:transform doc:name="updateFlowname" doc:id="05997bf1-6100-421f-a823-461085470a51" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="flowName" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.loggingVars update {
+	case .flowName -> Mule::p('flowName.getOrdersByIdSubflow')
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="00f7ec5a-512c-49b9-87df-7a32f8b045bb" name="common-flow-start-logging-subflow"/>
+		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="dc426dbd-bcdc-48d4-be9d-3769c948674c" name="common-before-request-logging-subflow"/>
+		<db:select doc:name="Select" doc:id="bdcf5312-3e26-45f8-a312-76cb5d3fff2c" >
+			<db:sql ><![CDATA[#[Mule::p('db:getOrdersById')]]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	id: attributes.headers.id
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="responseToJson" doc:id="aeb4ef1e-6a96-47df-bcc1-2349a3a46fc8">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="common-after-request-logging-subflow" doc:id="69ad2266-798f-460b-8cd1-f571c4e8d712" name="common-after-request-logging-subflow"/>
+		<flow-ref doc:name="common-flow-end-logging-subflow" doc:id="fe5316bf-8c41-4e3c-9610-b2a9c1df477a" name="common-flow-end-logging-subflow"/>
+	</sub-flow>
+</mule>

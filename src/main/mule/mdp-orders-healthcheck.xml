@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="mdp-orders-healthcheck-subflow" doc:id="49469786-4a87-4b5a-9360-7b46037c1f05" >
+		<ee:transform doc:name="updateFlowname" doc:id="fe79e9b3-7925-4fdd-9f00-12e9655f4394" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="flowName" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.loggingVars update {
+	case .flowName -> Mule::p('flowName.healthCheckSubflow')
+}
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="ff9514b0-29ec-4e40-ad7f-12c5dfab7e86" name="common-flow-start-logging-subflow"/>
+		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="c8c008ff-69bf-48c2-a81d-3dfac225a965" name="common-before-request-logging-subflow"/>
+		<db:select doc:name="Select" doc:id="d790b32f-f9b3-4304-9291-8cd49b7e347f" config-ref="Database_Config">
+			<db:sql ><![CDATA[#[Mule::p('db:healthcheck')]]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	id: 1
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="healthCheckResponse" doc:id="20640a87-2ccc-4cb3-a05e-10c932d34eb6">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+                "message": "OK",
+                "appName": "mdp-orders-exp-api is reachable",
+                "failed": false,
+                "systems": [
+                  {
+                    "appName": "mdp-orders-prc-api",
+                    "failed": false,
+                    "status": "mdp-orders-prc-api is reachable"
+                  },
+                   {
+                    "appName": "mdp-orders-sys-api",
+                    "failed": false,
+                    "status": "mdp-orders-sys-api is reachable"
+                  },
+                   {
+                    "system": "salesforce",
+                    "status": "salesforce is reachable",
+                    "code": 200
+                  }
+                ],
+                "status": "200" 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="common-after-request-logging-subflow" doc:id="f8e2ef86-d94d-4036-9122-e3fdbb6ac2ec" name="common-after-request-logging-subflow"/>
+		<flow-ref doc:name="common-flow-end-logging-subflow" doc:id="2f9f5aa8-c878-43f8-825a-38f36980bf06" name="common-flow-end-logging-subflow"/>
+	</sub-flow>
+</mule>
