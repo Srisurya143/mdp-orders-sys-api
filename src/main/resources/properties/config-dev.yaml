@@ -1,7 +1,5 @@
-mdpOrdersSysApi:
+mdpOrdersDb:
+  username: "root"
+  password: "Surya@1998"
   host: "localhost"
-  port: "8082"
-  baseUrl: "/v1"
-  path: "/orders"
-  ping: "/ping"
-  healthCheck: "/healthcheck"
+  port: "3306"

@@ -32,3 +32,11 @@ db:
   getOrdersQuery: "SELECT order_id, customer_name, product, customer_address, customer_contact, order_type, regionOfSales, orderValue FROM orders"
   getOrdersById: "SELECT order_id, customer_name, product, customer_address, customer_contact, order_type, regionOfSales, orderValue FROM orders where order_id= :id"
   healthcheck: "SELECT order_id FROM orders where orders=:id"
+  updateOrderById: "UPDATE orders SET order_id= :orderId, customer_name= :customerName, product= :Product, customer_address= :customerAddress, order_type= :orderType, regionOfSales= :regionOfSales, orderValue= :orderValue WHERE order_id= :id"
+  createOrders: "INSERT INTO orders (order_id, customer_name, product, customer_address, customer_contact, order_type, regionOfSales, orderValue) Values(:order_id, :customer_name, :product, :customer_address, :customer_contact, :order_type, :regionOfSales, :orderValue)"
+  
+  
+  
+  
+  
+  

@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_a7cab286_fe49_44bc_a5c8_6c0a4b2aa473_Input_Variables_resourcePath = String
-

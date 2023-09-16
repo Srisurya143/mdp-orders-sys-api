@@ -22,7 +22,21 @@ vars.loggingVars update {
 		</ee:transform>
 		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="cd406202-a363-4b26-847b-508d01c85738" name="common-flow-start-logging-subflow"/>
 		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="b6811015-a040-49f8-a1fd-1e1dc7acf890" name="common-before-request-logging-subflow"/>
-		<db:update doc:name="Update" doc:id="272eb01f-cbc7-442d-8ca6-a8e4f50cd9a0" config-ref="Database_Config"/>
+		<foreach doc:name="For Each" doc:id="f94da964-383c-431b-b328-97728a8cb7d7" >
+			<db:update doc:name="Update" doc:id="272eb01f-cbc7-442d-8ca6-a8e4f50cd9a0" config-ref="Database_Config" >
+				<db:sql ><![CDATA[#[Mule::p('db.updateOrderById')]]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+	"orderId": payload.orderId, 
+	"customerName": payload.customer_name, 
+	"product": payload.Product, 
+	"customerAddress": payload.customer_address, 
+	"orderType": payload.order_type, 
+	"regionOfSales": payload.regionOfSales, 
+	"orderValue": payload.orderValue,
+	"id": payload.order_id	
+}]]]></db:input-parameters>
+			</db:update>
+		</foreach>
 		<ee:transform doc:name="responseToJson" doc:id="6cacc726-4606-4a47-83f5-12cfdffb3cc7" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0

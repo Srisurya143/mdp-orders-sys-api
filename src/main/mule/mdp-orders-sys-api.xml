@@ -59,123 +59,21 @@ output application/json
         </error-handler>
     </flow>
     <flow name="patch:\orders:application\json:mdp-orders-sys-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    orderId: 12,
-    message: "Order updated in salesforce",
-    timeStamp: "2023-09-09T18:06:32.083291Z",
-    correlationId: "12387638"
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="mdp-orders-patch-subflow" doc:id="efc40227-7cb8-431a-afb2-a176fd8bded8" name="mdp-orders-patch-subflow"/>
     </flow>
     <flow name="get:\healthcheck:mdp-orders-sys-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "OK",
-  apiName: "mdp-orders-sys-api",
-  failed: false,
-  version: "1.0.0",
-  env: "dev",
-  status: "salesforce reachable",
-  systems: [
-    {
-      message: "OK",
-      system: "salesfore",
-      status: "salesforce is reachable"
-    }
-  ],
-  code: 200
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="mdp-orders-healthcheck-subflow" doc:id="a5f649ec-6a15-47ab-a31f-516fb57073e3" name="mdp-orders-healthcheck-subflow"/>
     </flow>
     <flow name="get:\orders:mdp-orders-sys-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    order_id: 1,
-    customer_name: "surya",
-    product: "cheese - Brie",
-    customer_address: "029 West Hill",
-    Customer_contact: 8919097266,
-    order_type: "online",
-    regionOfSales: "New York",
-    orderValue: "\$617.10"
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="mdp-orders-get-subflow" doc:id="faac7f5e-36ae-4e2d-aa54-f9560a9c6e65" name="mdp-orders-get-subflow"/>
     </flow>
     <flow name="get:\ping:mdp-orders-sys-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  apiName: "mdp-orders-sys-api",
-  apiVersion: "1.0.0",
-  timeStamp: "2023-09-09 18:06:32.083291Z",
-  status: "Running",
-  correaltionId: "128768346"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="mdp-orders-ping-subflow" doc:id="27e2cf08-ff8e-4331-a590-34ea023d261e" name="mdp-orders-ping-subflow"/>
     </flow>
     <flow name="get:\orders\(order_id):mdp-orders-sys-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="order_id">attributes.uriParams.'order_id'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    order_id: 1,
-    customer_name: "surya",
-    product: "cheese - Brie",
-    customer_address: "029 West Hill",
-    Customer_contact: 8919097266,
-    order_type: "online",
-    regionOfSales: "New York",
-    orderValue: "\$617.10"
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="mdp-orders-getid-subflow" doc:id="c0a081e7-cd95-41df-a04f-d3d9b2d8afdd" name="mdp-orders-getid-subflow"/>
     </flow>
     <flow name="post:\orders:application\json:mdp-orders-sys-api-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  orderId: 12,
-  message: "Order created in salesforce",
-  timeStamp: "2023-09-09T18:06:32.083291Z",
-  correlationId: "12387638"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+		<flow-ref doc:name="mdp-orders-post-subflow" doc:id="64a80024-f02e-45b5-b817-8bd7d5969b02" name="mdp-orders-post-subflow"/>
     </flow>
 </mule>

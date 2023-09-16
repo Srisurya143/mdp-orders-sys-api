@@ -22,10 +22,10 @@ vars.loggingVars update {
 		</ee:transform>
 		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="00f7ec5a-512c-49b9-87df-7a32f8b045bb" name="common-flow-start-logging-subflow"/>
 		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="dc426dbd-bcdc-48d4-be9d-3769c948674c" name="common-before-request-logging-subflow"/>
-		<db:select doc:name="Select" doc:id="bdcf5312-3e26-45f8-a312-76cb5d3fff2c" >
+		<db:select doc:name="Select" doc:id="bdcf5312-3e26-45f8-a312-76cb5d3fff2c" config-ref="Database_Config">
 			<db:sql ><![CDATA[#[Mule::p('db:getOrdersById')]]]></db:sql>
 			<db:input-parameters ><![CDATA[#[{
-	id: attributes.headers.id
+	id: attributes.uriParams.'order_id'
 }]]]></db:input-parameters>
 		</db:select>
 		<ee:transform doc:name="responseToJson" doc:id="aeb4ef1e-6a96-47df-bcc1-2349a3a46fc8">

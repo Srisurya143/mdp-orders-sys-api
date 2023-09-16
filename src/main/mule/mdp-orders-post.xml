@@ -22,13 +22,41 @@ vars.loggingVars update {
 		</ee:transform>
 		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="376c3066-bfd2-4477-bb91-2877c62e3661" name="common-flow-start-logging-subflow"/>
 		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="43ac3448-1883-41b5-8217-c69bbb01034f" name="common-before-request-logging-subflow"/>
-		<db:bulk-insert doc:name="Bulk insert" doc:id="f082690a-dc74-439d-8179-bcf679cf3a26" config-ref="Database_Config"/>
+		<set-variable value="#[[]]" doc:name="Set Variable" doc:id="d8f316b5-382e-4072-8552-d5fc641d7216" variableName="dbResponse"/>
+		<foreach doc:name="For Each" doc:id="58b8a09a-9544-4ab6-b27d-18636fd2141b" >
+			<db:insert doc:name="Insert" doc:id="f7cf8b4c-2c5c-446c-8b7b-91cf44f5ea29" config-ref="Database_Config">
+				<db:sql ><![CDATA[#[Mule::p('db.createOrders')]]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+	"order_id" :payload.order_id, 
+	"customer_name": payload.customer_name, 
+	"product": payload.product, 
+	"customer_address": payload.customer_address, 
+	"customer_contact": payload.customer_contact, 
+	"order_type": payload.order_type, 
+	"regionOfSales": payload.regionOfSales,
+	"orderValue": payload.orderValue 
+}]]]></db:input-parameters>
+			</db:insert>
+			<ee:transform doc:name="Transform Message" doc:id="b4b21d75-bc7e-4416-901e-cf486d623508" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="dbResponse" ><![CDATA[%dw 2.0
+output application/json
+---
+if(!isEmpty(vars.dbResponse))
+vars.dbResponse + payload
+else 
+[] + payload]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
 		<ee:transform doc:name="responseToJson" doc:id="77e83242-3a74-4ae0-a7f3-f4337084f707" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+vars.dbResponse]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<flow-ref doc:name="common-after-request-logging-subflow" doc:id="d3b8dee3-b204-4544-9020-d5b11e2514c3" name="common-after-request-logging-subflow"/>

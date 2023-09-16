@@ -14,6 +14,9 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     </http:listener-config>
     <apikit:config name="mdp-orders-sys-api-config" api="resource::5a149ba4-8c03-420f-a296-d088003db09f:mdp-orders-sys-api:1.0.0:raml:zip:mdp-orders-sys-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />	
 <db:config name="Database_Config" doc:name="Database Config" doc:id="42eaea91-6aa0-42e1-a16f-8a9b75eb6d6c" >
-		<db:my-sql-connection host="localhost" port="3306" user="root" password="Surya@1998" database="Employee" />
+		<db:my-sql-connection host="${mdpOrdersDb.host}" port="${mdpOrdersDb.port}" user="${mdpOrdersDb.username}" password="${mdpOrdersDb.password}" database="Employee" />
 	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="5b04c4b5-e74a-465c-8506-a5f8a0ec9686" file="properties/common.yaml" />
+	<global-property doc:name="Global Property" doc:id="3c55fc25-5088-42d5-be23-734ee48a5227" name="mule.env" value="local" />
+	<configuration-properties doc:name="Configuration properties" doc:id="efb4e580-b343-4dd4-8fb6-31b73793fe53" file="properties/config-${mule.env}.yaml" />
 </mule>
