@@ -23,10 +23,7 @@ vars.loggingVars update {
 		<flow-ref doc:name="common-flow-start-logging-subflow" doc:id="ff9514b0-29ec-4e40-ad7f-12c5dfab7e86" name="common-flow-start-logging-subflow"/>
 		<flow-ref doc:name="common-before-request-logging-subflow" doc:id="c8c008ff-69bf-48c2-a81d-3dfac225a965" name="common-before-request-logging-subflow"/>
 		<db:select doc:name="Select" doc:id="d790b32f-f9b3-4304-9291-8cd49b7e347f" config-ref="Database_Config">
-			<db:sql ><![CDATA[#[Mule::p('db:healthcheck')]]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{
-	id: 1
-}]]]></db:input-parameters>
+			<db:sql ><![CDATA[SELECT order_id FROM orders where order_id=1]]></db:sql>
 		</db:select>
 		<ee:transform doc:name="healthCheckResponse" doc:id="20640a87-2ccc-4cb3-a05e-10c932d34eb6">
 			<ee:message>
@@ -35,23 +32,16 @@ output application/json
 ---
 {
                 "message": "OK",
-                "appName": "mdp-orders-exp-api is reachable",
-                "failed": false,
+                "appName": Mule::p('api.Name'),
+                "failed": if(!isEmpty(payload)) false else true,
+                "version": Mule::p('api.Version'),
+                "timeStamp": now(),
+                "tire": p('mule.env'),
                 "systems": [
                   {
-                    "appName": "mdp-orders-prc-api",
-                    "failed": false,
-                    "status": "mdp-orders-prc-api is reachable"
-                  },
-                   {
-                    "appName": "mdp-orders-sys-api",
-                    "failed": false,
-                    "status": "mdp-orders-sys-api is reachable"
-                  },
-                   {
-                    "system": "salesforce",
-                    "status": "salesforce is reachable",
-                    "code": 200
+                    "system": "MySQL DB",
+                    "failed": if(!isEmpty(payload)) false else true,
+                    "status": if(!isEmpty(payload)) "MySQL DB is reachable" else "MySQL DB is not reachable" 
                   }
                 ],
                 "status": "200" 
