@@ -31,7 +31,7 @@ vars.loggingVars update {
 	"customer_name": payload.customer_name, 
 	"product": payload.product, 
 	"customer_address": payload.customer_address, 
-	"customer_contact": payload.Customer_contact, 
+	"customer_contact": payload.customer_contact, 
 	"order_type": payload.order_type, 
 	"regionOfSales": payload.regionOfSales,
 	"orderValue": payload.orderValue 

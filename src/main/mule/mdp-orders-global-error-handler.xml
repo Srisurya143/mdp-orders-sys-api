@@ -93,9 +93,11 @@ else
 	<sub-flow name="common-error-logging-subflow" doc:id="0015e368-a5ac-4b52-b96a-f1a50d6bad5c" >
 		<ee:transform doc:name="errorMessageTransformMessage" doc:id="a9481373-7e89-4ee6-a21a-f89211f178c7" >
 			<ee:message >
-				<ee:set-payload resource="dwl/errorMessageLogging.dwl" />
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dwl/errorMessageLogging.dwl" variableName="logException" />
+			</ee:variables>
 		</ee:transform>
-		<logger level="ERROR" doc:name="Logger" doc:id="74a00562-678d-47bc-8c5b-9b39a4904459" message="#[payload]"/>
+		<logger level="ERROR" doc:name="Logger" doc:id="74a00562-678d-47bc-8c5b-9b39a4904459" message="#[vars.logException]"/>
 	</sub-flow>
 </mule>
