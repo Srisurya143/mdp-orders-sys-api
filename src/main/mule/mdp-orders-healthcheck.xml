@@ -31,20 +31,27 @@ vars.loggingVars update {
 output application/json
 ---
 {
-                "message": "OK",
-                "appName": Mule::p('api.Name'),
-                "failed": if(!isEmpty(payload)) false else true,
-                "version": Mule::p('api.Version'),
-                "timeStamp": now(),
-                "tire": p('mule.env'),
+                "message": Mule::p('healthCheck.ok'),
+                "reason": Mule::p('healthCheck.reason'),
+                "response": {
+                	"application": Mule::p('api.Name'),
+                	"buildVersion": Mule::p('api.Version'),
+                	"buildTimeStamp": now(),
+                	"code": Mule::p('healthCheck.okCode'),
+                	"failed": false,
+                	"host":  Mule::p('healthCheck.host'),
+                	"tire": p('mule.env'),
                 "systems": [
                   {
-                    "system": "MySQL DB",
-                    "failed": if(!isEmpty(payload)) false else true,
-                    "status": if(!isEmpty(payload)) "MySQL DB is reachable" else "MySQL DB is not reachable" 
-                  }
+                  	"code": Mule::p('healthCheck.systems.okCode'),
+                  	"message": if(!isEmpty(payload)) Mule::p('healthCheck.systems.reachable') else Mule::p('healthCheck.systems.error'), 
+                    "name": Mule::p('healthCheck.systems.name')
+                    
+                    }
                 ],
                 "status": "200" 
+               }
+             
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

@@ -11,7 +11,19 @@ flowName:
   "pingSubflow": "mdp-orders-ping-subflow"
   "healthCheckSubflow": "mdp-orders-healthcheck-subflow"
   "getOrdersByIdSubflow": "mdp-orders-getid-subflow"
-  
+
+healthCheck:
+  reason: "Health Check"
+  ok: "OK"
+  okCode: "OK"
+  host: "localhost"
+  systems:
+    okCode: "OK"
+    error: "ERROR"
+    name: "MySQL"
+    reachable:  "MySQL DB is reachable"
+    notReachable:  "MySQL DB is not reachable"  
+    
 httpRetry:
   frequency: "2000"
   attempts: "3"
